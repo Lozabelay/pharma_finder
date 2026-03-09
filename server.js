@@ -14,8 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 // Use Routes
-app.use('/api/auth', authRoutes); // <--- This connects /api/auth to authRoutes.js
 
+app.use('/api/auth', require('./routes/authRoutes'));
 // ... existing code ...
 
 
