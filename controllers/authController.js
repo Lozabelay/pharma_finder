@@ -39,6 +39,47 @@ exports.register = async (req, res) => {
 
 // LOGIN (We will do this next)
 exports.login = async (req, res) => {
-    // Login logic will go here in the next step
-    res.json({ message: 'Login endpoint ready' });
+    try {
+        const { email, password } = req.body;
+
+        // 1. Check if user exists
+        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        
+        if (rows.length === 0) {
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        }
+
+        const user = rows[0];
+
+        // 2. Compare password (Input password vs Database Hashed Password)
+        const isMatch = await bcrypt.compare(password, user.password);
+        
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        }
+
+        // 3. Create Token (JWT)
+        const token = jwt.sign(
+            { id: user.id, role: user.role }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1d' } // Token expires in 1 day
+        );
+
+        // 4. Send Response
+        res.json({
+            success: true,
+            message: 'Login successful',
+            token: token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
 };
