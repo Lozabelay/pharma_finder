@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const db = require('./config/db');
+const medicineRoutes = require('./routes/medicineRoutes');
 const authRoutes = require('./routes/authRoutes'); // <--- Import the routes
 
 const app = express();
@@ -14,6 +15,14 @@ app.use(express.json());
 
 // Use Routes
 app.use('/api/auth', authRoutes); // <--- This connects /api/auth to authRoutes.js
+
+// ... existing code ...
+
+
+// ... existing middleware ...
+app.use('/api/medicines', medicineRoutes);
+
+// ... server listen ...
 
 // Test DB Route (you can keep this or delete it)
 app.get('/test-db', async (req, res) => {
