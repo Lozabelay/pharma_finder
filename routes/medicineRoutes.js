@@ -3,11 +3,18 @@ const router = express.Router();
 const medicineController = require('../controllers/medicineController');
 const verifyToken = require('../middleware/authMiddleware'); // 1. Import the Bouncer
 
-// 2. Add 'verifyToken' as the second argument
-// Now, this route requires a valid token to access
-router.post('/add', verifyToken, medicineController.addMedicine);
+// --- PUBLIC ROUTES (Anyone can access) ---
 
-// This route remains public (anyone can view)
+// 1. Search Medicines (For Patients) - We put this FIRST
+router.get('/search', medicineController.searchMedicines);
+
+// 2. Get All Medicines
 router.get('/', medicineController.getMedicines);
+
+
+// --- PROTECTED ROUTES (Must have Token) ---
+
+// 3. Add Medicine (Only logged-in Pharmacy Admins)
+router.post('/add', verifyToken, medicineController.addMedicine);
 
 module.exports = router;
