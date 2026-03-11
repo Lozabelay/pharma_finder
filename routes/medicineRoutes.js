@@ -1,20 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const medicineController = require('../controllers/medicineController');
-const verifyToken = require('../middleware/authMiddleware'); // 1. Import the Bouncer
+const verifyToken = require('../middleware/authMiddleware');
 
-// --- PUBLIC ROUTES (Anyone can access) ---
-
-// 1. Search Medicines (For Patients) - We put this FIRST
+// --- PUBLIC ROUTES ---
 router.get('/search', medicineController.searchMedicines);
-
-// 2. Get All Medicines
 router.get('/', medicineController.getMedicines);
 
-
-// --- PROTECTED ROUTES (Must have Token) ---
-
-// 3. Add Medicine (Only logged-in Pharmacy Admins)
+// --- PROTECTED ROUTES (Pharmacy Admin) ---
 router.post('/add', verifyToken, medicineController.addMedicine);
+router.get('/my-inventory', verifyToken, medicineController.getMyMedicines);
+router.put('/update/:id', verifyToken, medicineController.updateMedicine);
+// ... existing imports and routes ...
+
+// --- PROTECTED ROUTES (Pharmacy Admin) ---
+router.post('/add', verifyToken, medicineController.addMedicine);
+router.get('/my-inventory', verifyToken, medicineController.getMyMedicines);
+router.put('/update/:id', verifyToken, medicineController.updateMedicine);
+
+// NEW: Delete Route
+router.delete('/delete/:id', verifyToken, medicineController.deleteMedicine);
+
+module.exports = router;
 
 module.exports = router;
